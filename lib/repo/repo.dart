@@ -8,6 +8,8 @@ import 'package:medi_admin_app/models/GetAllUsersResponse.dart';
 import 'package:medi_admin_app/models/GetSpecificOrderModel.dart';
 import 'package:medi_admin_app/models/GetSpecificUserResponse.dart';
 
+import '../models/GetUserStockResponse.dart';
+
 class Repo {
   Future<GetAllUsersResponse> getAllUsers() async {
     try {
@@ -273,6 +275,29 @@ class Repo {
     }
   }
 
+
+  Future<GetUserStockResponse> getAllStock(String userId)
+  async {
+    try {
+      final response = await http.post(
+        Uri.parse("$BASE_URL$GET_USERSTOCK_ENDPOINT"),
+
+        body: {"user_id": userId},
+      );
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+
+        return GetUserStockResponse.fromJson(json);
+      } else if (response.statusCode == 400) {
+        throw Exception("Not found");
+      } else {
+        throw Exception("Unexpected status: ${response.statusCode}");
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 
 
 }

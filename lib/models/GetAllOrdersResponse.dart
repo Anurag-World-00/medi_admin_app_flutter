@@ -42,11 +42,11 @@ class OrderMessage {
   final int isApproved;
   final String message;
   final String orderId;
-  final num price;
+  final double price;
   final String productId;
   final String productName;
   final int quantity;
-  final num totalAmount;
+  final double totalAmount;
   final String userId;
   final String userName;
 
@@ -78,17 +78,13 @@ class OrderMessage {
           : int.tryParse(json['isApproved'].toString()) ?? 0,
       message: json['message'] ?? '',
       orderId: json['order_id'] ?? '',
-      price: json['price'] is num
-          ? json['price']
-          : num.tryParse(json['price'].toString()) ?? 0,
+      price: (json['price'] as num).toDouble() ?? 0.0,
       productId: json['product_id'] ?? '',
       productName: json['product_name'] ?? '',
       quantity: json['quantity'] is int
           ? json['quantity']
           : int.tryParse(json['quantity'].toString()) ?? 0,
-      totalAmount: json['total_amount'] is num
-          ? json['total_amount']
-          : num.tryParse(json['total_amount'].toString()) ?? 0,
+      totalAmount:( json['total_amount'] as num).toDouble() ?? 0.0,
       userId: json['user_id'] ?? '',
       userName: json['user_name'] ?? '',
     );

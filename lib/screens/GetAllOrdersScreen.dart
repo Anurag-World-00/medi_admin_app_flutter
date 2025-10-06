@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:medi_admin_app/screens/OrderDetailsScreen.dart';
 import 'package:provider/provider.dart';
+
 import '../viewModel/MyViewModel.dart';
 
 class GetAllOrdersScreen extends StatefulWidget {
@@ -19,7 +20,7 @@ class _GetAllOrdersScreenState extends State<GetAllOrdersScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Padding(
-          padding: EdgeInsets.only(left:5,right: 5,top: 5,bottom: 20),
+          padding: EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 20),
           child: Text("All Orders", style: TextStyle(color: Colors.white)),
         ),
         backgroundColor: Colors.lightBlueAccent,
@@ -55,89 +56,101 @@ class _GetAllOrdersScreenState extends State<GetAllOrdersScreen> {
 
               return Padding(
                 padding: const EdgeInsets.all(8),
-                child:
-              InkWell( onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context){
-                  return OrderDetailsScreen(orderId: order.orderId, orderStatus: order.isApproved == 1 ? "Approved" : "Pending");
-                }));
-              },child:   Card(
-                color: Colors.white,
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 7,
-                    horizontal: 10,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "User: ${order.userName}",
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return OrderDetailsScreen(
+                            orderId: order.orderId,
+                            orderStatus: order.isApproved == 1
+                                ? "Approved"
+                                : "Pending",
+                          );
+                        },
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        "Product: ${order.productName}",
-                        style: const TextStyle(color: Colors.black54),
+                    );
+                  },
+                  child: Card(
+                    color: Colors.white,
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 7,
+                        horizontal: 10,
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        "Category: ${order.category}",
-                        style: const TextStyle(color: Colors.black54),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            isApproved ? "Approved" : "Pending",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              color: isApproved ? Colors.green : Colors.red,
+                            "User: ${order.userName}",
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(width: 10),
-                          Switch(
-                            value: isApproved,
-                            activeThumbColor: Colors.green,
-                            inactiveThumbColor: Colors.red,
-                            onChanged: (value) async {
-                              setState(() {
-                                _switchStates[order.orderId] = value;
-                              });
+                          const SizedBox(height: 6),
+                          Text(
+                            "Product: ${order.productName}",
+                            style: const TextStyle(color: Colors.black54),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            "Category: ${order.category}",
+                            style: const TextStyle(color: Colors.black54),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Text(
+                                isApproved ? "Approved" : "Pending",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: isApproved ? Colors.green : Colors.red,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Switch(
+                                value: isApproved,
+                                activeThumbColor: Colors.green,
+                                inactiveThumbColor: Colors.red,
+                                onChanged: (value) async {
+                                  setState(() {
+                                    _switchStates[order.orderId] = value;
+                                  });
 
-                              // Here you can call your API to update approval
-                              if (value) {
-                                // User turned it ON → Approve the order
-                                vm.approveOrder(order.orderId, 1);
-                                await vm.addUserStock(
-                                    order.productId,
-                                    order.productName,
-                                    order.quantity.toString(),
-                                    order.price.toString(),
-                                    order.category,
-                                    order.userId,
-                                    order.userName,
-                                    order.orderId
-                                );
-                              } else {
-
-                                vm.approveOrder(order.orderId, 0);
-                                await vm.deleteUserStock(order.orderId);
-                              }
-                            },
+                                  // Here you can call your API to update approval
+                                  if (value) {
+                                    // User turned it ON → Approve the order
+                                    vm.approveOrder(order.orderId, 1);
+                                    await vm.addUserStock(
+                                      order.productId,
+                                      order.productName,
+                                      order.quantity.toString(),
+                                      order.price.toString(),
+                                      order.category,
+                                      order.userId,
+                                      order.userName,
+                                      order.orderId,
+                                    );
+                                    vm.getUserStock(order.userId);
+                                  } else {
+                                    vm.approveOrder(order.orderId, 0);
+                                    await vm.deleteUserStock(order.orderId);
+                                  }
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),)
               );
             },
           );

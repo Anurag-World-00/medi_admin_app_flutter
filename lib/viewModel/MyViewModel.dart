@@ -7,6 +7,8 @@ import 'package:medi_admin_app/models/GetSpecificOrderModel.dart';
 import 'package:medi_admin_app/models/GetSpecificUserResponse.dart';
 import 'package:medi_admin_app/repo/repo.dart';
 
+import '../models/GetUserStockResponse.dart';
+
 class MyViewModel extends ChangeNotifier {
   final _repo = Repo();
 
@@ -47,6 +49,11 @@ class MyViewModel extends ChangeNotifier {
 
   UiState<GetSpecificUserResponse> get getSpecificUserState =>
       _getSpecificUserState;
+
+  UiState<GetUserStockResponse> _getUserStockState = UiState.idle();
+
+  UiState<GetUserStockResponse> get getUserStockState => _getUserStockState;
+
 
 
 
@@ -97,6 +104,7 @@ class MyViewModel extends ChangeNotifier {
       );
 
       _addProductState = UiState.success(response);
+      getAllOrders();
       notifyListeners();
     } catch (e) {
       _addProductState = UiState.error(e.toString());
@@ -125,6 +133,7 @@ class MyViewModel extends ChangeNotifier {
       final response = await _repo.approveOrder(orderId, isApproved);
 
       _approveOrderState = UiState.success(response);
+      getAllOrders();
       notifyListeners();
     } catch (e) {
       _approveOrderState = UiState.error(e.toString());
@@ -248,4 +257,19 @@ class MyViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> getUserStock(String userId) async {
+    _getUserStockState = UiState.loading();
+    notifyListeners();
+
+    try {
+      final data = await _repo.getAllStock(userId);
+      _getUserStockState = UiState.success(data);
+      notifyListeners();
+    } catch (e) {
+      _getUserStockState = UiState.error(e.toString());
+      notifyListeners();
+    }
+  }
+
 }

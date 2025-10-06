@@ -120,6 +120,7 @@ class _GetAllUsersScreenState extends State<GetAllUsersScreen> {
 
                                     if (value) {
                                       vm.approveUser(response.userId, 1);
+                                      vm.getAllUsers();
                                     } else {
                                       vm.approveUser(response.userId, 0);
                                     }
